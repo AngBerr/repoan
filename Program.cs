@@ -1,2 +1,12 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using System.Threading; 
+int counter = 0; 
+Thread t1 = new Thread(() => { for (int i = 0; i < 100000; i++) counter++; }); 
+Thread t2 = new Thread(() => { for (int i = 0; i < 100000; i++) counter++; }); 
+t1.Start(); 
+t2.Start(); 
+t1.Join(); 
+t2.Join(); 
+Console.WriteLine("Без lock: " + counter); counter = 0; object locker = new object(); 
+t1 = new Thread(() => { for (int i = 0; i < 100000; i++) lock (locker) counter++; }); 
+t2 = new Thread(() => { for (int i = 0; i < 100000; i++) lock (locker) counter++; }); 
+t1.Start(); t2.Start(); t1.Join(); t2.Join(); Console.WriteLine("С lock: " + counter);
